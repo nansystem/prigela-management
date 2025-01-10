@@ -9,5 +9,5 @@ export default defineNuxtConfig({
       autoprefixer: {}
     }
   },
-  modules: ['@nuxtjs/eslint-module']
+  modules: ['@nuxtjs/eslint-module', '@pinia/nuxt']
 })

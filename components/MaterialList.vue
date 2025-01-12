@@ -58,21 +58,21 @@
       <div class="flex justify-end space-x-3 mt-3">
         <button
           v-if="!editingIndexes.includes(index)"
-          @click="startEditing(index)"
           class="px-3 py-1 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          @click="startEditing(index)"
         >
           編集
         </button>
         <button
           v-else
-          @click="saveEdit(index)"
           class="px-3 py-1 text-sm font-medium text-green-600 bg-green-50 rounded-md hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500"
+          @click="saveEdit(index)"
         >
           保存
         </button>
         <button
-          @click="removeMaterial(index)"
           class="px-3 py-1 text-sm font-medium text-red-600 bg-red-50 rounded-md hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500"
+          @click="removeMaterial(index)"
         >
           削除
         </button>

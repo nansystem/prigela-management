@@ -19,11 +19,29 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '~/stores/auth'
 
 const authStore = useAuthStore()
+const router = useRouter()
 
 onMounted(async () => {
   await authStore.initialize()
+
+  // 認証状態が確定したらルートガードを実行
+  // 初期ロード時のリダイレクト
+  if (!authStore.isAuthenticated && !['/login'].includes(router.currentRoute.value.path)) {
+    router.push('/login')
+  }
+
+  // 認証状態変更時のリダイレクト
+  watch(
+    () => authStore.isAuthenticated,
+    isAuthenticated => {
+      if (!isAuthenticated && !['/login'].includes(router.currentRoute.value.path)) {
+        router.push('/login')
+      }
+    }
+  )
 })
 </script>

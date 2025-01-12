@@ -1,6 +1,5 @@
 <template>
   <div class="space-y-4">
-    <div>{{ materialsStore.materials }}</div>
     <div
       v-for="(material, index) in materialsStore.materials"
       :key="index"

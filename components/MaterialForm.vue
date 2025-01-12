@@ -11,7 +11,7 @@
       />
       <div class="grid grid-cols-2 gap-2">
         <input
-          v-model.number="material.unitQuantity"
+          v-model.number="material.unit_quantity"
           type="number"
           placeholder="単位量"
           class="w-full p-2 border rounded"
@@ -20,7 +20,7 @@
           required
         />
         <input
-          v-model="material.unitType"
+          v-model="material.unit_type"
           type="text"
           placeholder="単位 (kg, mlなど)"
           class="w-full p-2 border rounded"
@@ -50,8 +50,8 @@ import type { Material } from '~/stores/materials'
 
 const material = ref<Material>({
   name: '',
-  unitQuantity: 1,
-  unitType: '',
+  unit_quantity: 1,
+  unit_type: '',
   price: 0
 })
 
@@ -60,15 +60,15 @@ const materialsStore = useMaterialsStore()
 const addMaterial = () => {
   if (
     material.value.name.trim() &&
-    material.value.unitType.trim() &&
-    material.value.unitQuantity > 0 &&
+    material.value.unit_type.trim() &&
+    material.value.unit_quantity > 0 &&
     material.value.price >= 0
   ) {
     materialsStore.addMaterial(material.value)
     material.value = {
       name: '',
-      unitQuantity: 1,
-      unitType: '',
+      unit_quantity: 1,
+      unit_type: '',
       price: 0
     }
   }

@@ -1,5 +1,6 @@
 <template>
   <div class="space-y-4">
+    <div>{{ materialsStore.materials }}</div>
     <div
       v-for="(material, index) in materialsStore.materials"
       :key="index"
@@ -11,7 +12,9 @@
           <span class="font-medium text-lg text-gray-800">{{ material.name }}</span>
           <span class="text-xl font-bold text-gray-800">
             {{ formatPrice(material.price) }}円
-            <span class="text-sm text-gray-500"> / {{ material.unitQuantity }}{{ material.unitType }}</span>
+            <span class="text-sm text-gray-500">
+              / {{ material.unit_quantity }}{{ material.unit_type }}</span
+            >
           </span>
         </div>
       </div>
@@ -27,7 +30,7 @@
         />
         <div class="grid grid-cols-2 gap-4">
           <input
-            v-model.number="editingMaterials[index].unitQuantity"
+            v-model.number="editingMaterials[index].unit_quantity"
             type="number"
             placeholder="単位量"
             class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
@@ -35,7 +38,7 @@
             max="9999"
           />
           <input
-            v-model="editingMaterials[index].unitType"
+            v-model="editingMaterials[index].unit_type"
             type="text"
             placeholder="単位 (kg, mlなど)"
             class="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
@@ -87,6 +90,14 @@ const materialsStore = useMaterialsStore()
 const editingIndexes = ref<number[]>([])
 const editingMaterials = ref<Material[]>([])
 
+// 初期データ取得
+materialsStore.fetchMaterials()
+
+// リアルタイム更新の設定
+onMounted(() => {
+  materialsStore.subscribeToChanges()
+})
+
 const formatPrice = (price: number) => {
   return price.toLocaleString('ja-JP')
 }
@@ -97,11 +108,17 @@ const startEditing = (index: number) => {
 }
 
 const saveEdit = (index: number) => {
-  materialsStore.updateMaterial(index, editingMaterials.value[index])
-  editingIndexes.value = editingIndexes.value.filter(i => i !== index)
+  const material = editingMaterials.value[index]
+  if (material.id) {
+    materialsStore.updateMaterial(material.id, material)
+    editingIndexes.value = editingIndexes.value.filter(i => i !== index)
+  }
 }
 
 const removeMaterial = (index: number) => {
-  materialsStore.removeMaterial(index)
+  const material = materialsStore.materials[index]
+  if (material.id) {
+    materialsStore.removeMaterial(material.id)
+  }
 }
 </script>

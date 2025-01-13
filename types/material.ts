@@ -7,3 +7,4 @@ export type Material = {
   createdAt?: string
 }
 export type NewMaterial = Omit<Material, 'id' | 'createdAt'>
+export type MaterialField = keyof Material

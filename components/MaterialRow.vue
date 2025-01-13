@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { Material } from '~/types/material'
+  import type { Material, MaterialField } from '~/types/material'
 
   const emit = defineEmits([
     'update-editing-materials',
@@ -86,14 +86,14 @@
     editingMaterials: Material[]
   }>()
 
-  const updateField = (index: number, field: string, value: string | number) => {
+  const updateField = (index: number, field: MaterialField, value: string | number) => {
     emit('update-editing-materials', {
       ...props.editingMaterials[index],
       [field]: value
     })
   }
 
-  const handleInput = (event: Event, index: number, field: string) => {
+  const handleInput = (event: Event, index: number, field: MaterialField) => {
     const target = event.target as HTMLInputElement
     if (target) {
       const value =

@@ -96,6 +96,28 @@
         </tr>
       </tbody>
     </table>
+
+    <!-- 削除確認モーダル -->
+    <Modal v-model="isDeleteModalOpen">
+      <template #title>削除の確認</template>
+      <div class="space-y-4">
+        <p>本当にこの材料を削除しますか？</p>
+        <div class="flex justify-end space-x-3">
+          <button
+            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
+            @click="cancelDelete"
+          >
+            キャンセル
+          </button>
+          <button
+            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+            @click="confirmDelete"
+          >
+            削除
+          </button>
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -107,6 +129,8 @@ import { useMaterialsStore } from '~/stores/materials'
 import type { Material } from '~/stores/materials'
 
 const isAddModalOpen = ref(false)
+const isDeleteModalOpen = ref(false)
+const deletingIndex = ref<number | null>(null)
 
 const materialsStore = useMaterialsStore()
 const editingIndexes = ref<number[]>([])
@@ -138,9 +162,23 @@ const saveEdit = (index: number) => {
 }
 
 const removeMaterial = (index: number) => {
-  const material = materialsStore.materials[index]
-  if (material.id) {
-    materialsStore.removeMaterial(material.id)
+  deletingIndex.value = index
+  isDeleteModalOpen.value = true
+}
+
+const confirmDelete = () => {
+  if (deletingIndex.value !== null) {
+    const material = materialsStore.materials[deletingIndex.value]
+    if (material.id) {
+      materialsStore.removeMaterial(material.id)
+    }
+    deletingIndex.value = null
+    isDeleteModalOpen.value = false
   }
+}
+
+const cancelDelete = () => {
+  deletingIndex.value = null
+  isDeleteModalOpen.value = false
 }
 </script>

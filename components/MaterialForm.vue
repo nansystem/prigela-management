@@ -48,6 +48,10 @@
 import { useMaterialsStore } from '~/stores/materials'
 import type { Material } from '~/stores/materials'
 
+const emit = defineEmits<{
+  (e: 'success'): void
+}>()
+
 const material = ref<Material>({
   name: '',
   unit_quantity: 1,
@@ -64,13 +68,15 @@ const addMaterial = () => {
     material.value.unit_quantity > 0 &&
     material.value.price >= 0
   ) {
-    materialsStore.addMaterial(material.value)
-    material.value = {
-      name: '',
-      unit_quantity: 1,
-      unit_type: '',
-      price: 0
-    }
+    materialsStore.addMaterial(material.value).then(() => {
+      material.value = {
+        name: '',
+        unit_quantity: 1,
+        unit_type: '',
+        price: 0
+      }
+      emit('success')
+    })
   }
 }
 </script>

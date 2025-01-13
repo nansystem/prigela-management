@@ -1,5 +1,16 @@
 <template>
   <div class="space-y-4">
+    <button
+      class="w-full p-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+      @click="isAddModalOpen = true"
+    >
+      材料を追加
+    </button>
+
+    <Modal v-model="isAddModalOpen">
+      <template #title>材料を追加</template>
+      <MaterialForm @success="isAddModalOpen = false" />
+    </Modal>
     <div
       v-for="(material, index) in materialsStore.materials"
       :key="index"
@@ -82,8 +93,13 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import Modal from './Modal.vue'
+import MaterialForm from './MaterialForm.vue'
 import { useMaterialsStore } from '~/stores/materials'
 import type { Material } from '~/stores/materials'
+
+const isAddModalOpen = ref(false)
 
 const materialsStore = useMaterialsStore()
 const editingIndexes = ref<number[]>([])

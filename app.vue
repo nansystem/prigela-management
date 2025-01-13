@@ -1,19 +1,18 @@
 <template>
   <div>
     <header>
-      <h1>アプリケーション共通のヘッダー</h1>
+      <h1>PRIGELA 管理画面</h1>
       <div v-if="authStore.loading">Loading...</div>
       <div v-else>
         <div v-if="authStore.isAuthenticated">
-          <p>Welcome, {{ authStore.user?.email }}</p>
+          <p>ようこそ, {{ authStore.user?.email }}</p>
           <button @click="authStore.signOut()">Sign out</button>
         </div>
-        <GoogleLogin v-else />
       </div>
     </header>
     <NuxtPage />
     <footer>
-      <p>アプリケーション共通のフッター</p>
+      <p>PRIGELA inc</p>
     </footer>
   </div>
 </template>

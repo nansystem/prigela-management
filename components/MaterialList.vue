@@ -25,26 +25,11 @@
     />
 
     <!-- 削除確認モーダル -->
-    <Modal v-model="isDeleteModalOpen">
-      <template #title>削除の確認</template>
-      <div class="space-y-4">
-        <p>本当にこの材料を削除しますか？</p>
-        <div class="flex justify-end space-x-3">
-          <button
-            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
-            @click="cancelDelete"
-          >
-            キャンセル
-          </button>
-          <button
-            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
-            @click="confirmDelete"
-          >
-            削除
-          </button>
-        </div>
-      </div>
-    </Modal>
+    <DeleteConfirmationModal
+      v-model="isDeleteModalOpen"
+      :message="'本当にこの材料を削除しますか？'"
+      @confirm="confirmDelete"
+    />
   </div>
 </template>
 
@@ -53,6 +38,7 @@
   import Modal from './Modal.vue'
   import MaterialForm from './MaterialForm.vue'
   import MaterialTable from './MaterialTable.vue'
+  import DeleteConfirmationModal from './DeleteConfirmationModal.vue'
   import { useMaterialsStore } from '~/stores/materials'
   import type { Material } from '~/stores/materials'
 
@@ -99,10 +85,5 @@
       deletingIndex.value = null
       isDeleteModalOpen.value = false
     }
-  }
-
-  const cancelDelete = () => {
-    deletingIndex.value = null
-    isDeleteModalOpen.value = false
   }
 </script>

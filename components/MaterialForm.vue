@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="addMaterial" class="space-y-4">
+  <form class="space-y-4" @submit.prevent="submitMaterial">
     <div class="grid grid-cols-1 gap-4">
       <input
         v-model="material.name"
@@ -39,44 +39,58 @@
       />
     </div>
     <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-      追加
+      {{ isEditMode ? '更新' : '追加' }}
     </button>
   </form>
 </template>
 
 <script setup lang="ts">
-import { useMaterialsStore } from '~/stores/materials'
-import type { Material } from '~/stores/materials'
+  import { useMaterialsStore } from '~/stores/materials'
+  import type { Material } from '~/stores/materials'
 
-const emit = defineEmits<{
-  (e: 'success'): void
-}>()
+  const props = defineProps<{
+    editMaterial?: Material
+  }>()
 
-const material = ref<Material>({
-  name: '',
-  unit_quantity: 1,
-  unit_type: '',
-  price: 0
-})
+  const emit = defineEmits<{
+    (e: 'success'): void
+  }>()
 
-const materialsStore = useMaterialsStore()
+  const material = ref<Material>(
+    props.editMaterial || {
+      name: '',
+      unit_quantity: 1,
+      unit_type: '',
+      price: 0
+    }
+  )
 
-const addMaterial = () => {
-  if (
-    material.value.name.trim() &&
-    material.value.unit_type.trim() &&
-    material.value.unit_quantity > 0 &&
-    material.value.price >= 0
-  ) {
-    materialsStore.addMaterial(material.value).then(() => {
-      material.value = {
-        name: '',
-        unit_quantity: 1,
-        unit_type: '',
-        price: 0
-      }
-      emit('success')
-    })
+  const isEditMode = computed(() => !!props.editMaterial?.id)
+
+  const materialsStore = useMaterialsStore()
+
+  const submitMaterial = () => {
+    if (
+      material.value.name.trim() &&
+      material.value.unit_type.trim() &&
+      material.value.unit_quantity > 0 &&
+      material.value.price >= 0
+    ) {
+      const action = isEditMode.value
+        ? materialsStore.updateMaterial(material.value.id!, material.value)
+        : materialsStore.addMaterial(material.value)
+
+      action.then(() => {
+        if (!isEditMode.value) {
+          material.value = {
+            name: '',
+            unit_quantity: 1,
+            unit_type: '',
+            price: 0
+          }
+        }
+        emit('success')
+      })
+    }
   }
-}
 </script>

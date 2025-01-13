@@ -6,7 +6,7 @@
           <h3 class="text-lg font-semibold">
             <slot name="title"></slot>
           </h3>
-          <button @click="close" class="text-gray-500 hover:text-gray-700">
+          <button class="text-gray-500 hover:text-gray-700" @click="close">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-6 w-6"
@@ -32,21 +32,21 @@
 </template>
 
 <script setup lang="ts">
-const isOpen = defineModel<boolean>({ required: true })
+  const isOpen = defineModel<boolean>({ required: true })
 
-const close = () => {
-  isOpen.value = false
-}
+  const close = () => {
+    isOpen.value = false
+  }
 </script>
 
 <style scoped>
-.modal-enter-active,
-.modal-leave-active {
-  transition: opacity 0.3s ease;
-}
+  .modal-enter-active,
+  .modal-leave-active {
+    transition: opacity 0.3s ease;
+  }
 
-.modal-enter-from,
-.modal-leave-to {
-  opacity: 0;
-}
+  .modal-enter-from,
+  .modal-leave-to {
+    opacity: 0;
+  }
 </style>

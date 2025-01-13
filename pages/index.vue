@@ -8,5 +8,5 @@
 </template>
 
 <script setup>
-import MaterialList from '~/components/MaterialList.vue'
+  import MaterialList from '~/components/MaterialList.vue'
 </script>

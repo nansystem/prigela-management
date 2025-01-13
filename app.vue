@@ -17,8 +17,8 @@
               ようこそ, <span class="font-medium">{{ authStore.user?.email }}</span>
             </p>
             <button
-              @click="authStore.signOut()"
               class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              @click="authStore.signOut()"
             >
               Sign out
             </button>
@@ -26,8 +26,8 @@
           <!-- 未認証の場合 -->
           <template v-else>
             <button
-              @click="router.push('/login')"
               class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              @click="router.push('/login')"
             >
               Log in
             </button>
@@ -49,27 +49,27 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '~/stores/auth'
+  import { useRouter } from 'vue-router'
+  import { useAuthStore } from '~/stores/auth'
 
-const authStore = useAuthStore()
-const router = useRouter()
+  const authStore = useAuthStore()
+  const router = useRouter()
 
-onMounted(async () => {
-  await authStore.initialize()
+  onMounted(async () => {
+    await authStore.initialize()
 
-  // 認証状態が確定したらルートガードを実行
-  if (!authStore.isAuthenticated && !['/login'].includes(router.currentRoute.value.path)) {
-    router.push('/login')
-  }
-
-  watch(
-    () => authStore.isAuthenticated,
-    isAuthenticated => {
-      if (!isAuthenticated && !['/login'].includes(router.currentRoute.value.path)) {
-        router.push('/login')
-      }
+    // 認証状態が確定したらルートガードを実行
+    if (!authStore.isAuthenticated && !['/login'].includes(router.currentRoute.value.path)) {
+      router.push('/login')
     }
-  )
-})
+
+    watch(
+      () => authStore.isAuthenticated,
+      isAuthenticated => {
+        if (!isAuthenticated && !['/login'].includes(router.currentRoute.value.path)) {
+          router.push('/login')
+        }
+      }
+    )
+  })
 </script>

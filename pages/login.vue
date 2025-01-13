@@ -8,5 +8,5 @@
 </template>
 
 <script setup lang="ts">
-import GoogleLogin from '~/components/GoogleLogin.vue'
+  import GoogleLogin from '~/components/GoogleLogin.vue'
 </script>

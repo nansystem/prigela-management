@@ -35,18 +35,18 @@
 </template>
 
 <script setup lang="ts">
-const supabase = useSupabase()
+  const supabase = useSupabase()
 
-const signInWithGoogle = async () => {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: window.location.origin
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin
+      }
+    })
+
+    if (error) {
+      alert('Error signing in with Google')
     }
-  })
-
-  if (error) {
-    alert('Error signing in with Google')
   }
-}
 </script>

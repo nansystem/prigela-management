@@ -82,16 +82,8 @@ CREATE TABLE IF NOT EXISTS "public"."materials" (
 ALTER TABLE "public"."materials" OWNER TO "postgres";
 
 
-ALTER TABLE ONLY "public"."materials"
-    ADD CONSTRAINT "materials_pkey" PRIMARY KEY ("id");
 
 
-
-CREATE POLICY "Enable insert for all users" ON "public"."materials" FOR INSERT WITH CHECK (true);
-
-
-
-CREATE POLICY "Enable read access for all users" ON "public"."materials" FOR SELECT USING (true);
 
 
 

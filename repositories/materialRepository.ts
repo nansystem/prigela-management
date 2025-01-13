@@ -32,7 +32,7 @@ export class MaterialRepository {
       .from('materials')
       .update(updateData)
       .eq('id', material.id)
-      .select()
+      .select('*')
 
     if (error) throw error
     if (!data || data.length === 0) {

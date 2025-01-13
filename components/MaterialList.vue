@@ -23,6 +23,7 @@
       @start-editing="startEditing"
       @save-edit="saveEdit"
       @remove-material="removeMaterial"
+      @update-editing-materials="updateEditingMaterials"
     />
   </div>
 </template>
@@ -38,7 +39,7 @@
 
   const { isAddModalOpen, addMaterial, openAddModal } = useAddMaterial(materialsStore)
 
-  const { editingIndexes, editingMaterials, startEditing, saveEdit } =
+  const { editingIndexes, editingMaterials, startEditing, saveEdit, updateEditingMaterials } =
     useEditMaterial(materialsStore)
 
   const { isDeleteModalOpen, removeMaterial, confirmDelete, cancelDelete } =

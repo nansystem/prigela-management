@@ -20,6 +20,7 @@
         @start-editing="startEditing"
         @save-edit="saveEdit"
         @remove-material="removeMaterial"
+        @update-editing-materials="updateEditingMaterials"
       />
     </tbody>
   </table>
@@ -34,7 +35,7 @@
     editingMaterials: Material[]
   }>()
 
-  const emit = defineEmits(['startEditing', 'saveEdit', 'removeMaterial'])
+  const emit = defineEmits(['startEditing', 'saveEdit', 'removeMaterial', 'updateEditingMaterials'])
 
   const startEditing = (index: number) => {
     emit('startEditing', index)
@@ -46,5 +47,9 @@
 
   const removeMaterial = (index: number) => {
     emit('removeMaterial', index)
+  }
+
+  const updateEditingMaterials = (updatedMaterial: Material) => {
+    emit('updateEditingMaterials', updatedMaterial)
   }
 </script>

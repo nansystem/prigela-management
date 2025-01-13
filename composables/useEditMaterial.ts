@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import type { MaterialsStore } from '~/stores/materials'
+import type { Material } from '~/types/material'
 
 export function useEditMaterial(materialsStore: MaterialsStore) {
   const editingIndexes = ref<number[]>([])
@@ -13,8 +14,15 @@ export function useEditMaterial(materialsStore: MaterialsStore) {
   const saveEdit = (index: number) => {
     const material = editingMaterials.value[index]
     if (material.id) {
-      materialsStore.updateMaterial(material.id, material)
+      materialsStore.updateMaterial(material)
       editingIndexes.value = editingIndexes.value.filter(i => i !== index)
+    }
+  }
+
+  const updateEditingMaterials = (updatedMaterial: Material) => {
+    const index = editingMaterials.value.findIndex(m => m.id === updatedMaterial.id)
+    if (index !== -1) {
+      editingMaterials.value[index] = updatedMaterial
     }
   }
 
@@ -22,6 +30,7 @@ export function useEditMaterial(materialsStore: MaterialsStore) {
     editingIndexes,
     editingMaterials,
     startEditing,
-    saveEdit
+    saveEdit,
+    updateEditingMaterials
   }
 }

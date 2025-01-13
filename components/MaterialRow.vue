@@ -73,7 +73,7 @@
   import type { Material } from '~/types/material'
 
   const emit = defineEmits([
-    'update:editingMaterials',
+    'update-editing-materials',
     'start-editing',
     'save-edit',
     'remove-material'
@@ -87,7 +87,7 @@
   }>()
 
   const updateField = (index: number, field: string, value: string | number) => {
-    emit('update:editingMaterials', {
+    emit('update-editing-materials', {
       ...props.editingMaterials[index],
       [field]: value
     })

@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { Material } from '~/stores/materials'
+  import type { Material } from '~/types/material'
 
   const emit = defineEmits([
     'update:editingMaterials',

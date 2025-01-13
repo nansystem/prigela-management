@@ -45,18 +45,22 @@
 </template>
 
 <script setup lang="ts">
-  import { useMaterialsStore } from '~/stores/materials'
-  import type { Material } from '~/stores/materials'
+  import { ref, computed } from 'vue'
+  import type { NewMaterial, Material } from '~/types/material'
 
   const props = defineProps<{
-    editMaterial?: Material
+    editMaterial?: NewMaterial | Material
   }>()
 
   const emit = defineEmits<{
-    (e: 'success'): void
+    (e: 'submit', material: NewMaterial | Material): void
   }>()
 
-  const material = ref<Material>(
+  const isMaterial = (value: NewMaterial | Material): value is Material => {
+    return (value as Material).id !== undefined
+  }
+
+  const material = ref<NewMaterial>(
     props.editMaterial || {
       name: '',
       unit_quantity: 1,
@@ -65,9 +69,9 @@
     }
   )
 
-  const isEditMode = computed(() => !!props.editMaterial?.id)
-
-  const materialsStore = useMaterialsStore()
+  const isEditMode = computed(
+    () => props.editMaterial !== undefined && isMaterial(props.editMaterial)
+  )
 
   const submitMaterial = () => {
     if (
@@ -76,21 +80,15 @@
       material.value.unit_quantity > 0 &&
       material.value.price >= 0
     ) {
-      const action = isEditMode.value
-        ? materialsStore.updateMaterial(material.value.id!, material.value)
-        : materialsStore.addMaterial(material.value)
-
-      action.then(() => {
-        if (!isEditMode.value) {
-          material.value = {
-            name: '',
-            unit_quantity: 1,
-            unit_type: '',
-            price: 0
-          }
+      emit('submit', { ...material.value })
+      if (!isEditMode.value) {
+        material.value = {
+          name: '',
+          unit_quantity: 1,
+          unit_type: '',
+          price: 0
         }
-        emit('success')
-      })
+      }
     }
   }
 </script>

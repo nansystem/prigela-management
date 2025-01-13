@@ -1,53 +1,45 @@
-import type { SupabaseClient } from '@supabase/supabase-js'
-import { useAuthSupabase } from '~/utils/supabase'
+import { SupabaseClient } from '@supabase/supabase-js'
+import type { Database, Tables, TablesInsert, TablesUpdate } from '~/types/supabase-types'
+import type { Material, NewMaterial } from '~/types/material'
 
-export interface Material {
-  id?: string
-  name: string
-  unit_quantity: number
-  unit_type: string
-  price: number
-  created_at?: string
-}
+export class MaterialRepository {
+  private supabase
 
-export interface MaterialRepository {
-  fetchMaterials(): Promise<Material[]>
-  addMaterial(material: Material): Promise<Material>
-  removeMaterial(id: string): Promise<void>
-  updateMaterial(id: string, material: Material): Promise<Material>
-  subscribeToChanges(callback: () => void): void
-}
-
-export class SupabaseMaterialRepository implements MaterialRepository {
-  private supabase: SupabaseClient
-
-  constructor() {
-    this.supabase = useAuthSupabase()
+  constructor(supabase: SupabaseClient<Database>) {
+    this.supabase = supabase
   }
 
   async fetchMaterials(): Promise<Material[]> {
-    const { data, error } = await this.supabase
-      .from('materials')
-      .select('*')
-      .order('created_at', { ascending: false })
+    const { data, error } = await this.supabase.from('materials').select('*')
+
     if (error) throw error
-    return data
+
+    return (data || []).map(row => this.mapToDomain(row))
   }
 
-  async addMaterial(material: Material): Promise<Material> {
+  async addMaterial(material: NewMaterial): Promise<Material> {
+    const insertData: TablesInsert<'materials'> = this.mapToSupabaseInsert(material)
+    const { data, error } = await this.supabase.from('materials').insert(insertData).select()
+
+    if (error) throw error
+    return this.mapToDomain(data![0])
+  }
+
+  // Update a material and return as domain model
+  async updateMaterial(material: Material): Promise<Material> {
+    const updateData: TablesUpdate<'materials'> = this.mapToSupabaseUpdate(material)
     const { data, error } = await this.supabase
       .from('materials')
-      .insert([
-        {
-          ...material,
-          unit_quantity: material.unit_quantity,
-          unit_type: material.unit_type
-        }
-      ])
+      .update(updateData)
+      .eq('id', material.id)
       .select()
 
     if (error) throw error
-    return data[0]
+    if (!data || data.length === 0) {
+      throw new Error('Failed to update material: No data returned.')
+    }
+
+    return this.mapToDomain(data[0])
   }
 
   async removeMaterial(id: string): Promise<void> {
@@ -56,33 +48,32 @@ export class SupabaseMaterialRepository implements MaterialRepository {
     if (error) throw error
   }
 
-  async updateMaterial(id: string, material: Material): Promise<Material> {
-    const { data, error } = await this.supabase
-      .from('materials')
-      .update({
-        ...material,
-        unit_quantity: material.unit_quantity,
-        unit_type: material.unit_type
-      })
-      .eq('id', id)
-      .select()
-
-    if (error) throw error
-    return data[0]
+  private mapToDomain(row: Tables<'materials'>): Material {
+    return {
+      id: row.id,
+      name: row.name,
+      unit_quantity: row.unit_quantity,
+      unit_type: row.unit_type,
+      price: row.price,
+      createdAt: row.created_at || undefined
+    }
   }
 
-  subscribeToChanges(callback: () => void): void {
-    this.supabase
-      .channel('materials')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'materials'
-        },
-        callback
-      )
-      .subscribe()
+  private mapToSupabaseInsert(material: NewMaterial): TablesInsert<'materials'> {
+    return {
+      name: material.name,
+      unit_quantity: material.unit_quantity,
+      unit_type: material.unit_type,
+      price: material.price
+    }
+  }
+
+  private mapToSupabaseUpdate(material: Material): TablesUpdate<'materials'> {
+    return {
+      name: material.name,
+      unit_quantity: material.unit_quantity,
+      unit_type: material.unit_type,
+      price: material.price
+    }
   }
 }

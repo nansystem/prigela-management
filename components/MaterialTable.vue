@@ -26,8 +26,7 @@
 </template>
 
 <script setup lang="ts">
-  import MaterialRow from './MaterialRow.vue'
-  import type { Material } from '~/stores/materials'
+  import type { Material } from '~/types/material'
 
   defineProps<{
     materials: Material[]

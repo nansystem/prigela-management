@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { MaterialRepository } from '~/repositories/materialRepository'
 import type { Material, NewMaterial } from '~/types/material'
+import { useSupabase } from '~/utils/supabase'
 
 export const useMaterialsStore = defineStore('materials', () => {
   const repository = new MaterialRepository(useSupabase())

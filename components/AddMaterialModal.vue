@@ -7,8 +7,6 @@
 
 <script setup lang="ts">
   import { ref, watch } from 'vue'
-  import MaterialForm from './MaterialForm.vue'
-  import Modal from './Modal.vue'
   import type { Material, NewMaterial } from '~/types/material'
 
   const props = defineProps<{

@@ -45,26 +45,14 @@
 
     <!-- アクションボタン -->
     <td class="px-4 py-2 flex justify-center space-x-3">
-      <button
+      <Button
         v-if="!editingIndexes.includes(index)"
-        class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+        label="編集"
+        variant="primary"
         @click="$emit('start-editing', index)"
-      >
-        編集
-      </button>
-      <button
-        v-else
-        class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition"
-        @click="$emit('save-edit', index)"
-      >
-        保存
-      </button>
-      <button
-        class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
-        @click="$emit('remove-material', index)"
-      >
-        削除
-      </button>
+      />
+      <Button v-else label="保存" variant="success" @click="$emit('save-edit', index)" />
+      <Button label="削除" variant="danger" @click="$emit('remove-material', index)" />
     </td>
   </tr>
 </template>

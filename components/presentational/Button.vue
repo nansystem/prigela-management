@@ -5,13 +5,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+  import { computed } from 'vue'
 
-defineEmits<{
-  (e: 'click'): void
-}>()
+  defineEmits<{
+    (e: 'click'): void
+  }>()
 
-const props = defineProps<{
+  const props = defineProps<{
     label: string
     variant: 'primary' | 'success' | 'danger'
   }>()

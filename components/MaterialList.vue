@@ -1,5 +1,6 @@
 <template>
   <div class="space-y-4">
+    <SearchMaterial @search="searchMaterials" />
     <button
       class="w-full p-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
       @click="openAddModal"
@@ -17,7 +18,7 @@
       @cancel="cancelDelete"
     />
     <MaterialTable
-      :materials="materialsStore.materials"
+      :materials="filteredMaterials"
       :editing-indexes="editingIndexes"
       :editing-materials="editingMaterials"
       @start-editing="startEditing"
@@ -33,6 +34,7 @@
   import { useAddMaterial } from '~/composables/useAddMaterial'
   import { useEditMaterial } from '~/composables/useEditMaterial'
   import { useDeleteMaterial } from '~/composables/useDeleteMaterial'
+  import { useSearchMaterial } from '~/composables/useSearchMaterial'
 
   const materialsStore = useMaterialsStore()
   materialsStore.fetchMaterials()
@@ -44,4 +46,8 @@
 
   const { isDeleteModalOpen, removeMaterial, confirmDelete, cancelDelete } =
     useDeleteMaterial(materialsStore)
+
+  const { filteredMaterials, searchMaterials } = useSearchMaterial(
+    toRef(materialsStore, 'materials')
+  )
 </script>

@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint . --ext .vue,.js,.ts",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage"

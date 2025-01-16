@@ -101,6 +101,7 @@ src/
 # supabase
 
 型更新
-``` bash
-supabase gen types typescript --project-id "$PROJECT_REF" --schema public > types/supabase-types.ts 
+
+```bash
+supabase gen types typescript --project-id "$PROJECT_REF" --schema public > types/supabase-types.ts
 ```

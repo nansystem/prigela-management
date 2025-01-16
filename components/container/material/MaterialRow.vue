@@ -6,6 +6,9 @@
       <td class="px-4 py-2">{{ material.unit_quantity }}</td>
       <td class="px-4 py-2">{{ material.unit_type }}</td>
       <td class="px-4 py-2">{{ formatPrice(material.price) }}</td>
+      <td class="px-4 py-2">
+        {{ formatUnitPrice(material.price, material.unit_quantity, material.unit_type) }}
+      </td>
     </template>
     <template v-else>
       <!-- 編集モード -->
@@ -93,6 +96,21 @@
   }
 
   const formatPrice = (price: number): string => {
-    return price.toLocaleString('ja-JP')
+    return `${price.toLocaleString('ja-JP')}`
+  }
+
+  const formatUnitPrice = (price: number, quantity: number, unitType: string): string => {
+    if (!quantity || quantity === 0) return '-'
+    const unitPrice = price / quantity
+    switch (unitType) {
+      case 'KG':
+        return `¥${(unitPrice / 1000).toFixed(2)}/g`
+      case 'L':
+        return `¥${(unitPrice / 1000).toFixed(2)}/ml`
+      case '個':
+        return `¥${unitPrice.toFixed(2)}/個`
+      default:
+        return '-'
+    }
   }
 </script>

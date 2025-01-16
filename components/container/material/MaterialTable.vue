@@ -6,6 +6,7 @@
         <th class="px-4 py-2 text-left text-gray-700 font-semibold">単位量</th>
         <th class="px-4 py-2 text-left text-gray-700 font-semibold">単位</th>
         <th class="px-4 py-2 text-left text-gray-700 font-semibold">価格 (円)</th>
+        <th class="px-4 py-2 text-left text-gray-700 font-semibold">価格 (円)/単位</th>
         <th class="px-4 py-2 text-center text-gray-700 font-semibold">アクション</th>
       </tr>
     </thead>

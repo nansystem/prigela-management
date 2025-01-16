@@ -3,6 +3,24 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      categories: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       material_aliases: {
         Row: {
           alias: string
@@ -25,6 +43,36 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'material_aliases_material_id_fkey'
+            columns: ['material_id']
+            isOneToOne: false
+            referencedRelation: 'materials'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      material_categories: {
+        Row: {
+          category_id: string
+          material_id: string
+        }
+        Insert: {
+          category_id: string
+          material_id: string
+        }
+        Update: {
+          category_id?: string
+          material_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'material_categories_category_id_fkey'
+            columns: ['category_id']
+            isOneToOne: false
+            referencedRelation: 'categories'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'material_categories_material_id_fkey'
             columns: ['material_id']
             isOneToOne: false
             referencedRelation: 'materials'

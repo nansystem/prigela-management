@@ -12,9 +12,11 @@ export class MaterialRepository {
   async fetchMaterials(): Promise<Material[]> {
     const { data, error } = await this.supabase.from('materials').select('*')
 
-    if (error) throw error
+    if (error || !data) {
+      throw new Error('Fetch failed')
+    }
 
-    return (data || []).map(row => this.mapToDomain(row))
+    return data.map(row => this.mapToDomain(row))
   }
 
   async addMaterial(material: NewMaterial): Promise<Material> {

@@ -2,10 +2,40 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { createClient } from '@supabase/supabase-js'
 import { MaterialRepository } from '~/repositories/materialRepository'
 import type { Material, NewMaterial } from '~/types/material'
+import type { Database } from '~/types/supabase-types'
 
 describe('MaterialRepository', () => {
-  const supabase = createClient('https://test.supabase.co', 'test-key')
+  const supabase = createClient<Database>('https://test.supabase.co', 'test-key')
   const repository = new MaterialRepository(supabase)
+
+  // モック用のヘルパー関数
+  const mockSupabaseQuery = () => {
+    const mockSelect = vi.fn()
+    const mockEq = vi.fn()
+    const mockDelete = vi.fn()
+    const mockInsert = vi.fn()
+    const mockUpdate = vi.fn()
+
+    // from().select()のモック
+    vi.spyOn(supabase, 'from').mockImplementation(
+      () =>
+        ({
+          select: mockSelect,
+          delete: mockDelete,
+          insert: mockInsert,
+          update: mockUpdate,
+          eq: mockEq
+        }) as any
+    )
+
+    return {
+      mockSelect,
+      mockEq,
+      mockDelete,
+      mockInsert,
+      mockUpdate
+    }
+  }
 
   beforeEach(() => {
     vi.resetAllMocks()
@@ -13,6 +43,7 @@ describe('MaterialRepository', () => {
 
   describe('fetchMaterials', () => {
     it('should return materials when successful', async () => {
+      const { mockSelect } = mockSupabaseQuery()
       const mockData = [
         {
           id: '1',
@@ -24,10 +55,10 @@ describe('MaterialRepository', () => {
         }
       ]
 
-      vi.spyOn(supabase.from('materials'), 'select').mockReturnValue({
+      mockSelect.mockResolvedValue({
         data: mockData,
         error: null
-      } as any)
+      })
 
       const result = await repository.fetchMaterials()
       expect(result).toEqual([
@@ -42,35 +73,64 @@ describe('MaterialRepository', () => {
       ])
     })
 
-    it('should throw error when failed', async () => {
-      vi.spyOn(supabase.from('materials'), 'select').mockReturnValue({
-        data: null,
-        error: new Error('Failed to fetch')
-      } as any)
+    it('should handle materials with null created_at', async () => {
+      const { mockSelect } = mockSupabaseQuery()
+      const mockData = [
+        {
+          id: '1',
+          name: 'Test Material',
+          unit_quantity: 10,
+          unit_type: 'kg',
+          price: 100,
+          created_at: null
+        }
+      ]
 
-      await expect(repository.fetchMaterials()).rejects.toThrow('Failed to fetch')
+      mockSelect.mockResolvedValue({
+        data: mockData,
+        error: null
+      })
+
+      const result = await repository.fetchMaterials()
+      expect(result[0].createdAt).toBeUndefined()
+    })
+
+    it('should throw error when fetch fails', async () => {
+      const { mockSelect } = mockSupabaseQuery()
+      mockSelect.mockResolvedValue({
+        data: null,
+        error: new Error('Fetch failed')
+      })
+
+      await expect(repository.fetchMaterials()).rejects.toThrow('Fetch failed')
     })
   })
 
   describe('addMaterial', () => {
+    const newMaterial: NewMaterial = {
+      name: 'New Material',
+      unit_quantity: 5,
+      unit_type: 'm',
+      price: 50
+    }
+
     it('should add and return material when successful', async () => {
-      const newMaterial: NewMaterial = {
-        name: 'New Material',
-        unit_quantity: 5,
-        unit_type: 'm',
-        price: 50
-      }
+      const { mockInsert } = mockSupabaseQuery()
+      const mockData = [
+        {
+          id: '2',
+          ...newMaterial,
+          created_at: '2024-01-02'
+        }
+      ]
 
-      const mockData = {
-        id: '2',
-        ...newMaterial,
-        created_at: '2024-01-02'
-      }
-
-      vi.spyOn(supabase.from('materials'), 'insert').mockReturnValue({
-        data: [mockData],
-        error: null
-      } as any)
+      mockInsert.mockImplementation(() => ({
+        select: () =>
+          Promise.resolve({
+            data: mockData,
+            error: null
+          })
+      }))
 
       const result = await repository.addMaterial(newMaterial)
       expect(result).toEqual({
@@ -83,35 +143,47 @@ describe('MaterialRepository', () => {
       })
     })
 
-    it('should throw error when failed', async () => {
-      vi.spyOn(supabase.from('materials'), 'insert').mockReturnValue({
-        data: null,
-        error: new Error('Failed to add')
-      } as any)
+    it('should throw error when insert fails', async () => {
+      const { mockInsert } = mockSupabaseQuery()
+      mockInsert.mockImplementation(() => ({
+        select: () =>
+          Promise.resolve({
+            data: null,
+            error: new Error('Insert failed')
+          })
+      }))
 
-      await expect(repository.addMaterial({} as NewMaterial)).rejects.toThrow('Failed to add')
+      await expect(repository.addMaterial(newMaterial)).rejects.toThrow('Insert failed')
     })
   })
 
   describe('updateMaterial', () => {
+    const material: Material = {
+      id: '1',
+      name: 'Updated Material',
+      unit_quantity: 20,
+      unit_type: 'kg',
+      price: 200
+    }
+
     it('should update and return material when successful', async () => {
-      const material: Material = {
-        id: '1',
-        name: 'Updated Material',
-        unit_quantity: 20,
-        unit_type: 'kg',
-        price: 200
-      }
+      const { mockUpdate } = mockSupabaseQuery()
+      const mockData = [
+        {
+          ...material,
+          created_at: '2024-01-01'
+        }
+      ]
 
-      const mockData = {
-        ...material,
-        created_at: '2024-01-01'
-      }
-
-      vi.spyOn(supabase.from('materials'), 'update').mockReturnValue({
-        data: [mockData],
-        error: null
-      } as any)
+      mockUpdate.mockImplementation(() => ({
+        eq: () => ({
+          select: () =>
+            Promise.resolve({
+              data: mockData,
+              error: null
+            })
+        })
+      }))
 
       const result = await repository.updateMaterial(material)
       expect(result).toEqual({
@@ -120,22 +192,34 @@ describe('MaterialRepository', () => {
       })
     })
 
-    it('should throw error when failed', async () => {
-      vi.spyOn(supabase.from('materials'), 'update').mockReturnValue({
-        data: null,
-        error: new Error('Failed to update')
-      } as any)
+    it('should throw error when update fails', async () => {
+      const { mockUpdate } = mockSupabaseQuery()
+      mockUpdate.mockImplementation(() => ({
+        eq: () => ({
+          select: () =>
+            Promise.resolve({
+              data: null,
+              error: new Error('Update failed')
+            })
+        })
+      }))
 
-      await expect(repository.updateMaterial({} as Material)).rejects.toThrow('Failed to update')
+      await expect(repository.updateMaterial(material)).rejects.toThrow('Update failed')
     })
 
-    it('should throw error when no data returned', async () => {
-      vi.spyOn(supabase.from('materials'), 'update').mockReturnValue({
-        data: [],
-        error: null
-      } as any)
+    it('should throw error when no data is returned', async () => {
+      const { mockUpdate } = mockSupabaseQuery()
+      mockUpdate.mockImplementation(() => ({
+        eq: () => ({
+          select: () =>
+            Promise.resolve({
+              data: [],
+              error: null
+            })
+        })
+      }))
 
-      await expect(repository.updateMaterial({} as Material)).rejects.toThrow(
+      await expect(repository.updateMaterial(material)).rejects.toThrow(
         'Failed to update material: No data returned.'
       )
     })
@@ -143,19 +227,27 @@ describe('MaterialRepository', () => {
 
   describe('removeMaterial', () => {
     it('should remove material when successful', async () => {
-      vi.spyOn(supabase.from('materials'), 'delete').mockReturnValue({
-        error: null
-      } as any)
+      const { mockDelete } = mockSupabaseQuery()
+      mockDelete.mockImplementation(() => ({
+        eq: () =>
+          Promise.resolve({
+            error: null
+          })
+      }))
 
       await expect(repository.removeMaterial('1')).resolves.not.toThrow()
     })
 
-    it('should throw error when failed', async () => {
-      vi.spyOn(supabase.from('materials'), 'delete').mockReturnValue({
-        error: new Error('Failed to delete')
-      } as any)
+    it('should throw error when delete fails', async () => {
+      const { mockDelete } = mockSupabaseQuery()
+      mockDelete.mockImplementation(() => ({
+        eq: () =>
+          Promise.resolve({
+            error: new Error('Delete failed')
+          })
+      }))
 
-      await expect(repository.removeMaterial('1')).rejects.toThrow('Failed to delete')
+      await expect(repository.removeMaterial('1')).rejects.toThrow('Delete failed')
     })
   })
 })

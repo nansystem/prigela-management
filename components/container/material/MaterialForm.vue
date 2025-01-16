@@ -3,6 +3,7 @@
     <div class="grid grid-cols-1 gap-4">
       <input
         v-model="material.name"
+        name="name"
         type="text"
         placeholder="材料名"
         class="w-full p-2 border rounded"
@@ -12,6 +13,7 @@
       <div class="grid grid-cols-2 gap-2">
         <input
           v-model.number="material.unit_quantity"
+          name="unit_quantity"
           type="number"
           placeholder="単位量"
           class="w-full p-2 border rounded"
@@ -21,6 +23,7 @@
         />
         <input
           v-model="material.unit_type"
+          name="unit_type"
           type="text"
           placeholder="単位 (kg, mlなど)"
           class="w-full p-2 border rounded"
@@ -30,6 +33,7 @@
       </div>
       <input
         v-model.number="material.price"
+        name="price"
         type="number"
         placeholder="価格 (円)"
         class="w-full p-2 border rounded"

@@ -44,7 +44,7 @@ export type Database = {
           {
             foreignKeyName: 'material_aliases_material_id_fkey'
             columns: ['material_id']
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: 'materials'
             referencedColumns: ['id']
           }

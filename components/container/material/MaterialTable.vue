@@ -3,6 +3,7 @@
     <thead>
       <tr class="bg-gray-100 border-b">
         <th class="px-4 py-2 text-left text-gray-700 font-semibold">材料名</th>
+        <th class="px-4 py-2 text-left text-gray-700 font-semibold">別名</th>
         <th class="px-4 py-2 text-left text-gray-700 font-semibold">単位量</th>
         <th class="px-4 py-2 text-left text-gray-700 font-semibold">単位</th>
         <th class="px-4 py-2 text-left text-gray-700 font-semibold">価格 (円)</th>

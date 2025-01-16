@@ -2,6 +2,10 @@ import { SupabaseClient } from '@supabase/supabase-js'
 import type { Database, Tables, TablesInsert, TablesUpdate } from '~/types/supabase-types'
 import type { Material, NewMaterial } from '~/types/material'
 
+type MaterialWithAlias = Tables<'materials'> & {
+  material_aliases?: Tables<'material_aliases'> | null
+}
+
 export class MaterialRepository {
   private supabase
 
@@ -10,11 +14,15 @@ export class MaterialRepository {
   }
 
   async fetchMaterials(): Promise<Material[]> {
-    const { data, error } = await this.supabase.from('materials').select('*')
+    const { data, error } = await this.supabase.from('materials').select(`
+      *,
+      material_aliases!left(alias)
+    `)
 
     if (error || !data) {
       throw new Error('Fetch failed')
     }
+    console.info('fetch materials:', data)
 
     return data.map(row => this.mapToDomain(row))
   }
@@ -50,13 +58,14 @@ export class MaterialRepository {
     if (error) throw error
   }
 
-  private mapToDomain(row: Tables<'materials'>): Material {
+  private mapToDomain(row: MaterialWithAlias): Material {
     return {
       id: row.id,
       name: row.name,
       unit_quantity: row.unit_quantity,
       unit_type: row.unit_type,
       price: row.price,
+      alias: row.material_aliases?.alias || '',
       createdAt: row.created_at || undefined
     }
   }

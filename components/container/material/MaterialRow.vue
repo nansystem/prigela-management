@@ -3,6 +3,7 @@
     <template v-if="!editingIndexes.includes(index)">
       <!-- 表示モード -->
       <td class="px-4 py-2">{{ material.name }}</td>
+      <td class="px-4 py-2">{{ material.alias }}</td>
       <td class="px-4 py-2">{{ material.unit_quantity }}</td>
       <td class="px-4 py-2">{{ material.unit_type }}</td>
       <td class="px-4 py-2">{{ formatPrice(material.price) }}</td>

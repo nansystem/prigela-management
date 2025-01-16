@@ -8,6 +8,13 @@
       >
         材料一覧
       </NuxtLink>
+      <NuxtLink
+        to="/suppliers"
+        class="block p-2 hover:bg-blue-50 rounded-lg transition-colors"
+        active-class="bg-blue-100 font-semibold"
+      >
+        仕入先一覧
+      </NuxtLink>
     </nav>
   </div>
 </template>

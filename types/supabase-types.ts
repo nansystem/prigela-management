@@ -43,19 +43,22 @@ export type Database = {
       }
       suppliers: {
         Row: {
+          created_at: string | null
           id: string
           name: string
-          url: string | null
+          url: string
         }
         Insert: {
-          id: string
+          created_at?: string | null
+          id?: string
           name: string
-          url?: string | null
+          url?: string
         }
         Update: {
+          created_at?: string | null
           id?: string
           name?: string
-          url?: string | null
+          url?: string
         }
         Relationships: []
       }

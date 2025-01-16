@@ -10,8 +10,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-  import MaterialList from '~/components/MaterialList.vue'
-  import SideNav from '~/components/SideNav.vue'
-</script>

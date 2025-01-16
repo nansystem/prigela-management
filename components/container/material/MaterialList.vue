@@ -31,10 +31,10 @@
 
 <script setup lang="ts">
   import { useMaterialsStore } from '~/stores/materials'
-  import { useAddMaterial } from '~/composables/useAddMaterial'
-  import { useEditMaterial } from '~/composables/useEditMaterial'
-  import { useDeleteMaterial } from '~/composables/useDeleteMaterial'
-  import { useSearchMaterial } from '~/composables/useSearchMaterial'
+  import { useAddMaterial } from '~/composables/material/useAddMaterial'
+  import { useEditMaterial } from '~/composables/material/useEditMaterial'
+  import { useDeleteMaterial } from '~/composables/material/useDeleteMaterial'
+  import { useSearchMaterial } from '~/composables/material/useSearchMaterial'
 
   const materialsStore = useMaterialsStore()
   materialsStore.fetchMaterials()

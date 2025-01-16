@@ -66,7 +66,8 @@ export class MaterialRepository {
       name: material.name,
       unit_quantity: material.unit_quantity,
       unit_type: material.unit_type,
-      price: material.price
+      price: material.price,
+      supplier_id: undefined
     }
   }
 
@@ -75,7 +76,8 @@ export class MaterialRepository {
       name: material.name,
       unit_quantity: material.unit_quantity,
       unit_type: material.unit_type,
-      price: material.price
+      price: material.price,
+      supplier_id: undefined
     }
   }
 }

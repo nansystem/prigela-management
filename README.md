@@ -100,8 +100,15 @@ src/
 
 # supabase
 
-型更新
 
 ```bash
+# マイグレーションファイル作成
+supabase migration new [ファイル名]
+
+# supbase
+supabase db push
+
+# 型更新
+. .env
 supabase gen types typescript --project-id "$PROJECT_REF" --schema public > types/supabase-types.ts
 ```

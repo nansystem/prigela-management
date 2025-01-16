@@ -3,6 +3,35 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      material_aliases: {
+        Row: {
+          alias: string
+          created_at: string
+          id: string
+          material_id: string
+        }
+        Insert: {
+          alias?: string
+          created_at?: string
+          id?: string
+          material_id: string
+        }
+        Update: {
+          alias?: string
+          created_at?: string
+          id?: string
+          material_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'material_aliases_material_id_fkey'
+            columns: ['material_id']
+            isOneToOne: false
+            referencedRelation: 'materials'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       materials: {
         Row: {
           created_at: string | null

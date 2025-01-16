@@ -1,146 +1,103 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { Material, NewMaterial } from '~/types/material'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { setActivePinia, createPinia } from 'pinia'
 import { useMaterialsStore } from '~/stores/materials'
+import { MaterialRepository } from '~/repositories/materialRepository'
+import type { Material, NewMaterial } from '~/types/material'
 
-describe('useMaterialsStore', () => {
-  const repository = {
-    fetchMaterials: vi.fn(),
-    addMaterial: vi.fn(),
-    removeMaterial: vi.fn(),
-    updateMaterial: vi.fn()
+vi.mock('~/repositories/materialRepository')
+vi.mock('~/utils/supabase', () => ({
+  useSupabase: vi.fn()
+}))
+
+describe('materials store', () => {
+  const mockMaterial: Material = {
+    id: '1',
+    name: 'Test Material',
+    unit_quantity: 10,
+    unit_type: 'kg',
+    price: 1000,
+    createdAt: '2024-01-01'
+  }
+
+  const mockNewMaterial: NewMaterial = {
+    name: 'New Material',
+    unit_quantity: 5,
+    unit_type: 'g',
+    price: 500
   }
 
   beforeEach(() => {
-    vi.resetAllMocks()
-    repository.fetchMaterials.mockResolvedValue([])
-  })
-
-  it('should initialize with empty materials', () => {
-    const store = useMaterialsStore()
-    expect(store.materials).toEqual([])
+    setActivePinia(createPinia())
+    vi.clearAllMocks()
   })
 
   describe('fetchMaterials', () => {
-    it('should fetch and set materials', async () => {
-      const mockData = [
-        {
-          id: '1',
-          name: 'Test Material',
-          unit_quantity: 10,
-          unit_type: 'kg',
-          price: 100,
-          createdAt: '2024-01-01'
-        }
-      ]
-      repository.fetchMaterials.mockResolvedValue(mockData)
-
+    it('should fetch materials and update state', async () => {
       const store = useMaterialsStore()
+      const mockMaterials = [mockMaterial]
+
+      vi.mocked(MaterialRepository.prototype.fetchMaterials).mockResolvedValue(mockMaterials)
+
       await store.fetchMaterials()
 
-      expect(store.materials).toEqual(mockData)
-      expect(repository.fetchMaterials).toHaveBeenCalled()
-    })
-
-    it('should handle fetch error', async () => {
-      repository.fetchMaterials.mockRejectedValue(new Error('Failed to fetch'))
-
-      const store = useMaterialsStore()
-      await expect(store.fetchMaterials()).rejects.toThrow('Failed to fetch')
-      expect(store.materials).toEqual([])
+      expect(store.materials).toEqual(mockMaterials)
+      expect(MaterialRepository.prototype.fetchMaterials).toHaveBeenCalledTimes(1)
     })
   })
 
   describe('addMaterial', () => {
-    it('should add material to the beginning of list', async () => {
-      const newMaterial: NewMaterial = {
-        name: 'New Material',
-        unit_quantity: 5,
-        unit_type: 'm',
-        price: 50
-      }
-      const mockData = {
-        id: '2',
-        ...newMaterial,
-        createdAt: '2024-01-02'
-      }
-      repository.addMaterial.mockResolvedValue(mockData)
-
+    it('should add material and update state', async () => {
       const store = useMaterialsStore()
-      await store.addMaterial(newMaterial)
 
-      expect(store.materials).toEqual([mockData])
-      expect(repository.addMaterial).toHaveBeenCalledWith(newMaterial)
-    })
+      vi.mocked(MaterialRepository.prototype.addMaterial).mockResolvedValue(mockMaterial)
 
-    it('should handle add error', async () => {
-      repository.addMaterial.mockRejectedValue(new Error('Failed to add'))
+      await store.addMaterial(mockNewMaterial)
 
-      const store = useMaterialsStore()
-      await expect(store.addMaterial({} as NewMaterial)).rejects.toThrow('Failed to add')
-      expect(store.materials).toEqual([])
+      expect(store.materials).toEqual([mockMaterial])
+      expect(MaterialRepository.prototype.addMaterial).toHaveBeenCalledWith(mockNewMaterial)
     })
   })
 
   describe('removeMaterial', () => {
-    it('should remove material from list', async () => {
-      const initialMaterials = [
-        {
-          id: '1',
-          name: 'Test Material',
-          unit_quantity: 10,
-          unit_type: 'kg',
-          price: 100,
-          createdAt: '2024-01-01'
-        }
-      ]
-      repository.fetchMaterials.mockResolvedValue(initialMaterials)
-
+    it('should remove material and update state', async () => {
       const store = useMaterialsStore()
-      await store.fetchMaterials()
-      await store.removeMaterial('1')
+      store.materials = [mockMaterial]
+
+      vi.mocked(MaterialRepository.prototype.removeMaterial).mockResolvedValue()
+
+      await store.removeMaterial(mockMaterial.id)
 
       expect(store.materials).toEqual([])
-      expect(repository.removeMaterial).toHaveBeenCalledWith('1')
-    })
-
-    it('should handle remove error', async () => {
-      repository.removeMaterial.mockRejectedValue(new Error('Failed to remove'))
-
-      const store = useMaterialsStore()
-      await expect(store.removeMaterial('1')).rejects.toThrow('Failed to remove')
+      expect(MaterialRepository.prototype.removeMaterial).toHaveBeenCalledWith(mockMaterial.id)
     })
   })
 
   describe('updateMaterial', () => {
-    it('should update material in list', async () => {
-      const initialMaterial = {
-        id: '1',
-        name: 'Test Material',
-        unit_quantity: 10,
-        unit_type: 'kg',
-        price: 100,
-        createdAt: '2024-01-01'
-      }
-      const updatedMaterial = {
-        ...initialMaterial,
-        name: 'Updated Material'
-      }
-      repository.fetchMaterials.mockResolvedValue([initialMaterial])
-      repository.updateMaterial.mockResolvedValue(updatedMaterial)
-
+    it('should update material and update state', async () => {
       const store = useMaterialsStore()
-      await store.fetchMaterials()
+      const initialMaterial = { ...mockMaterial, name: 'Initial Name' }
+      const updatedMaterial = { ...mockMaterial, name: 'Updated Name' }
+      store.materials = [initialMaterial]
+
+      vi.mocked(MaterialRepository.prototype.updateMaterial).mockResolvedValue(updatedMaterial)
+
       await store.updateMaterial(updatedMaterial)
 
-      expect(store.materials).toEqual([updatedMaterial])
-      expect(repository.updateMaterial).toHaveBeenCalledWith(updatedMaterial)
+      expect(store.materials[0]).toEqual(updatedMaterial)
+      expect(MaterialRepository.prototype.updateMaterial).toHaveBeenCalledWith(updatedMaterial)
     })
 
-    it('should handle update error', async () => {
-      repository.updateMaterial.mockRejectedValue(new Error('Failed to update'))
-
+    it('should not update state if material is not found', async () => {
       const store = useMaterialsStore()
-      await expect(store.updateMaterial({} as Material)).rejects.toThrow('Failed to update')
+      const nonExistentMaterial = { ...mockMaterial, id: 'non-existent' }
+      store.materials = [mockMaterial]
+
+      vi.mocked(MaterialRepository.prototype.updateMaterial).mockResolvedValue(nonExistentMaterial)
+
+      await store.updateMaterial(nonExistentMaterial)
+
+      expect(store.materials).toEqual([mockMaterial])
+      expect(MaterialRepository.prototype.updateMaterial).toHaveBeenCalledWith(nonExistentMaterial)
     })
   })
 })

@@ -9,6 +9,7 @@ export type Database = {
           id: string
           name: string
           price: number
+          supplier_id: string
           unit_quantity: number
           unit_type: string
         }
@@ -17,6 +18,7 @@ export type Database = {
           id?: string
           name: string
           price: number
+          supplier_id?: string
           unit_quantity: number
           unit_type: string
         }
@@ -25,8 +27,35 @@ export type Database = {
           id?: string
           name?: string
           price?: number
+          supplier_id?: string
           unit_quantity?: number
           unit_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'fk_supplier'
+            columns: ['supplier_id']
+            isOneToOne: false
+            referencedRelation: 'suppliers'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      suppliers: {
+        Row: {
+          id: string
+          name: string
+          url: string | null
+        }
+        Insert: {
+          id: string
+          name: string
+          url?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          url?: string | null
         }
         Relationships: []
       }

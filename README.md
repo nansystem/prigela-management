@@ -97,3 +97,10 @@ src/
 1. **Page Component** を中心に、ルートやページごとの状態・初期化を統括する設計。
 2. **Container Component** と **Composable** を活用し、ロジックの分離と再利用性を確保。
 3. 各層の責務を明確化し、不適切なアクセスを防ぐことで、保守性とスケーラビリティを向上。
+
+# supabase
+
+型更新
+``` bash
+supabase gen types typescript --project-id "$PROJECT_REF" --schema public > types/supabase-types.ts 
+```

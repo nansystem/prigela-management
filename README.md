@@ -1,114 +1,123 @@
-# コンポーネント設計
+# Prigela Management
 
-プロジェクトの層とアクセス制限を整理したテーブルを提示します。
+Material and supplier management system built with Next.js 15 and Turso.
 
----
+## Tech Stack
 
-| **層**                     | **役割**                                                                                                         | **アクセス可能な層**                                        | **アクセス禁止の層**                                                    |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------- |
-| **Page Component**         | ページ単位のレイアウトや、必要なデータの取得・初期化を担当。<br>他のコンポーネントやロジックの組み合わせを管理。 | Container Component, Composable, Store                      | Repository, Presentation Component                                      |
-| **Container Component**    | 状態管理とロジックを担当。Presentation Component にデータを渡し、イベントを処理。                                | Store, Composable, Presentation Component                   | Repository                                                              |
-| **Presentation Component** | UI のレンダリング。ロジックや状態管理を含まない。                                                                | Container Component                                         | Store, Repository, Composable                                           |
-| **Composable**             | 再利用可能なロジックや状態を提供。複数のコンポーネントで共有可能。                                               | Store, Page Component, Container Component                  | Repository, Presentation Component                                      |
-| **Repository**             | データベースや API へのアクセスを一元管理。ビジネスロジックを含まない。                                          | Store                                                       | Page Component, Container Component, Presentation Component, Composable |
-| **Store**                  | アプリ全体で共有する状態を管理。非同期処理やデータ取得を担当。                                                   | Repository, Page Component, Container Component, Composable | Presentation Component                                                  |
+- **Framework**: Next.js 15 (App Router)
+- **Database**: Turso (Edge SQLite)
+- **ORM**: Drizzle ORM
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
+- **Deployment**: Vercel
 
----
+## Getting Started
 
-## **各層の役割とアクセスルール**
+### Prerequisites
 
-### **Page Component**
+- Node.js 18+ (Node.js 20+ recommended for Next.js 15)
+- npm or yarn
+- Turso account (https://turso.tech/)
 
-- **役割**:
-  - ページ単位でのレイアウトやデータの初期化を行う。
-  - ルートや外部コンポーネントの呼び出しを統括し、適切なコンテナにデータを渡す。
-- **アクセス可能**:
-  - `Store`: 状態の読み取り・更新。
-  - `Composable`: 再利用可能なロジックの活用。
-  - `Container Component`: 子コンポーネントとしてレイアウトやロジックを委譲。
-- **アクセス禁止**:
-  - `Repository`: 生データベース操作は行わない。
-  - `Presentation Component`: 直接操作せず、必ず `Container Component` を介す。
+### Installation
 
----
-
-### **例: データフロー**
-
-1. **Page Component**:
-
-   - ページ全体で必要なデータを取得（`Store` を使用）。
-   - 必要な `Container Component` を呼び出し、状態やロジックを委譲。
-
-2. **Container Component**:
-
-   - ページ内のデータロジック（例: 材料の管理）を担当。
-   - 状態を取得・管理し、UI コンポーネントに渡す。
-
-3. **Presentation Component**:
-
-   - 親コンポーネントから渡されたデータを表示。
-   - イベントを親に通知。
-
-4. **Composable**:
-
-   - 再利用可能なロジック（例: 材料の追加・編集処理）を提供。
-   - `Page Component` や `Container Component` で利用。
-
-5. **Store**:
-
-   - 状態を管理し、`Repository` を使用して非同期処理を行う。
-   - アプリ全体で共有可能なデータを提供。
-
-6. **Repository**:
-   - データベースや API とのやり取りを抽象化。
-   - `Store` を通じてデータ取得・更新を行う。
-
----
-
-## **ディレクトリ構成**
-
-```
-src/
-├── pages/
-│   ├── MaterialsPage.vue       # 材料管理ページ
-│   ├── DashboardPage.vue       # ダッシュボードページ
-├── components/
-│   ├── MaterialList.vue        # コンテナコンポーネント
-│   ├── MaterialTable.vue       # プレゼンテーションコンポーネント
-│   ├── MaterialRow.vue         # プレゼンテーションコンポーネント
-│   ├── AddMaterialModal.vue    # プレゼンテーションコンポーネント
-│   ├── DeleteConfirmationModal.vue # プレゼンテーションコンポーネント
-├── composables/
-│   ├── useAddMaterial.ts       # ロジックのカプセル化
-│   ├── useEditMaterial.ts
-│   ├── useDeleteMaterial.ts
-├── stores/
-│   ├── materialsStore.ts       # 状態管理
-├── repositories/
-│   ├── MaterialRepository.ts   # データベースアクセス
-├── types/
-│   ├── material.ts             # 型定義
-```
-
----
-
-## **設計のポイント**
-
-1. **Page Component** を中心に、ルートやページごとの状態・初期化を統括する設計。
-2. **Container Component** と **Composable** を活用し、ロジックの分離と再利用性を確保。
-3. 各層の責務を明確化し、不適切なアクセスを防ぐことで、保守性とスケーラビリティを向上。
-
-# supabase
-
-
+1. Clone the repository:
 ```bash
-# マイグレーションファイル作成
-supabase migration new [ファイル名]
-
-# supbase
-supabase db push
-
-# 型更新
-. .env
-supabase gen types typescript --project-id "$PROJECT_REF" --schema public > types/supabase-types.ts
+git clone <repository-url>
+cd prigela-management
 ```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Set up environment variables:
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and add your Turso credentials:
+```
+TURSO_DATABASE_URL=libsql://your-database.turso.io
+TURSO_AUTH_TOKEN=your-auth-token-here
+```
+
+### Database Setup
+
+1. Create a Turso database:
+```bash
+turso db create prigela-management
+```
+
+2. Get your database URL:
+```bash
+turso db show prigela-management --url
+```
+
+3. Create an auth token:
+```bash
+turso db tokens create prigela-management
+```
+
+4. Push the schema to your database:
+```bash
+npm run db:push
+```
+
+### Development
+
+Run the development server:
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Database Commands
+
+- `npm run db:generate` - Generate migration files
+- `npm run db:migrate` - Run migrations
+- `npm run db:push` - Push schema changes to database
+- `npm run db:studio` - Open Drizzle Studio (database GUI)
+
+## Deployment
+
+### Deploy to Vercel
+
+1. Push your code to GitHub
+
+2. Import your repository in Vercel
+
+3. Add environment variables in Vercel:
+   - `TURSO_DATABASE_URL`
+   - `TURSO_AUTH_TOKEN`
+
+4. Deploy!
+
+Alternatively, use the Vercel CLI:
+```bash
+vercel
+```
+
+## Project Structure
+
+```
+.
+├── app/                  # Next.js App Router
+│   ├── layout.tsx       # Root layout
+│   ├── page.tsx         # Home page
+│   └── globals.css      # Global styles
+├── lib/
+│   └── db/              # Database configuration
+│       ├── index.ts     # Database client
+│       └── schema.ts    # Drizzle schema
+├── drizzle/             # Generated migrations
+├── drizzle.config.ts    # Drizzle configuration
+├── next.config.ts       # Next.js configuration
+└── tailwind.config.ts   # Tailwind configuration
+```
+
+## License
+
+MIT

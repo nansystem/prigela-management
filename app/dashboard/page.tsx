@@ -9,6 +9,12 @@ export default async function DashboardPage() {
     redirect("/sign-in");
   }
 
+  // @prigela.comドメインのメールアドレスのみ許可
+  const email = user?.emailAddresses[0]?.emailAddress;
+  if (!email || !email.endsWith("@prigela.com")) {
+    redirect("/auth-error");
+  }
+
   return (
     <main className="flex min-h-screen flex-col p-8">
       <div className="max-w-4xl mx-auto w-full">

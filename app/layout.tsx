@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import {
   ClerkProvider,
-  SignInButton,
-  SignUpButton,
   SignedIn,
-  SignedOut,
   UserButton,
 } from "@clerk/nextjs";
 import "./globals.css";
@@ -24,12 +21,6 @@ export default function RootLayout({
       <html lang="ja">
         <body className="antialiased">
           <header className="p-4 border-b">
-            <SignedOut>
-              <div className="flex gap-4">
-                <SignInButton />
-                <SignUpButton />
-              </div>
-            </SignedOut>
             <SignedIn>
               <UserButton />
             </SignedIn>

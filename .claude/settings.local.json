@@ -8,7 +8,11 @@
       "Bash(vercel --yes:*)",
       "Bash(vercel secrets add:*)",
       "Bash(vercel secrets:*)",
-      "Bash(vercel env:*)"
+      "Bash(vercel env:*)",
+      "WebFetch(domain:clerk.com)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []

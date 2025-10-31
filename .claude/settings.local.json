@@ -12,7 +12,13 @@
       "WebFetch(domain:clerk.com)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(mkdir:*)"
+      "Bash(git push:*)",
+      "Bash(mkdir:*)",
+      "Bash(npx vercel:*)",
+      "Bash(npm outdated:*)",
+      "Bash(npm update:*)",
+      "Bash(npm audit:*)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

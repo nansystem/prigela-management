@@ -1,5 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -43,18 +44,24 @@ export default async function DashboardPage() {
         <div className="bg-white shadow rounded-lg p-6">
           <h2 className="text-2xl font-semibold mb-4">クイックアクセス</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="border rounded p-4 hover:bg-gray-50 cursor-pointer">
+            <Link
+              href="/dashboard/materials"
+              className="border rounded p-4 hover:bg-gray-50 cursor-pointer transition"
+            >
               <h3 className="font-semibold mb-2">材料管理</h3>
               <p className="text-sm text-gray-600">
                 材料の登録、編集、削除を行います
               </p>
-            </div>
-            <div className="border rounded p-4 hover:bg-gray-50 cursor-pointer">
+            </Link>
+            <Link
+              href="/dashboard/suppliers"
+              className="border rounded p-4 hover:bg-gray-50 cursor-pointer transition"
+            >
               <h3 className="font-semibold mb-2">仕入先管理</h3>
               <p className="text-sm text-gray-600">
                 仕入先の情報を管理します
               </p>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
